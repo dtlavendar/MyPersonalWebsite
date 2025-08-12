@@ -40,7 +40,7 @@ const skills = [
   'AWS Lambda', 'AWS DynamoDB', 'AWS S3', 'AWS API Gateway', 'AWS Strands', 'Kotlin', 'Python',
 ];
 
-function AnimatedHeading({ text }: { text: string }) {
+function AnimatedHeading({ text, onSecret }: { text: string; onSecret?: () => void }) {
   const words = text.split(' ');
   const [isDwightHover, setIsDwightHover] = React.useState(false);
   const hoverTimeoutRef = React.useRef<number | null>(null);
@@ -64,6 +64,7 @@ function AnimatedHeading({ text }: { text: string }) {
     if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = window.setTimeout(() => {
       window.open(secretUrl, '_blank', 'noopener');
+      if (onSecret) onSecret();
     }, 1250);
   };
 
@@ -107,7 +108,7 @@ function AnimatedHeading({ text }: { text: string }) {
   );
 }
 
-function Home() {
+function Home({ onSecret }: { onSecret?: () => void }) {
   // Stabilize external icon loading
   const iconUrls = React.useMemo(() => {
     const urls = skills
@@ -173,7 +174,7 @@ function Home() {
 
           {/* Right: Heading + Intro */}
           <div className="space-y-4 md:pl-2">
-            <AnimatedHeading text={"Hey, I'm Dwight."} />
+            <AnimatedHeading text={"Hey, I'm Dwight."} onSecret={onSecret} />
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -290,6 +291,7 @@ function Home() {
 }
 
 export default function App() {
+  const [secretFound, setSecretFound] = React.useState(false);
   return (
     <div className="min-h-screen relative">
       <BackgroundNotes />
@@ -322,10 +324,10 @@ export default function App() {
         </div>
       </header>
 
-      <Home />
+      <Home onSecret={() => setSecretFound(true)} />
 
       <footer className="relative z-10 mx-auto max-w-5xl px-4 py-10 text-xs text-neutral-500">
-        One more secret on this page...
+        {secretFound ? 'Yeah, that was it!' : 'One more secret on this page...'}
       </footer>
     </div>
   );
