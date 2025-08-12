@@ -26,7 +26,7 @@ const getIconUrl = (skill: string): string | undefined => {
     C: `${base}/c/c-original.svg`,
     Java: `${base}/java/java-original.svg`,
     OpenCV: `${base}/opencv/opencv-original.svg`,
-    Flask: `https://cdn.simpleicons.org/flask/ffffff`,
+    Flask: `${base}/flask/flask-original.svg`,
     TensorFlow: `${base}/tensorflow/tensorflow-original.svg`,
     SQL: `${base}/mysql/mysql-original.svg`,
     Kotlin: `${base}/kotlin/kotlin-original.svg`,
@@ -42,20 +42,67 @@ const skills = [
 
 function AnimatedHeading({ text }: { text: string }) {
   const words = text.split(' ');
+  const [isDwightHover, setIsDwightHover] = React.useState(false);
+  const hoverTimeoutRef = React.useRef<number | null>(null);
+
+  // Obscured secret URL (Base64), with fun scientist names
+  const curie = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0yb0RScGNfSm1VYw==';
+  const turingDecode = (payload: string): string => {
+    try {
+      // atob exists in browsers; fallback returns original if unavailable
+      return typeof window !== 'undefined' && 'atob' in window ? window.atob(payload) : payload;
+    } catch {
+      return payload;
+    }
+  };
+  const secretUrl = turingDecode(curie);
+
+  const isDwightToken = (token: string) => token.replace(/[^A-Za-z0-9_]/g, '') === 'Dwight';
+
+  const handleDwightEnter = () => {
+    setIsDwightHover(true);
+    if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      window.open(secretUrl, '_blank', 'noopener');
+    }, 1250);
+  };
+
+  const handleDwightLeave = () => {
+    setIsDwightHover(false);
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+
   return (
     <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.5] sm:leading-[1.45] pb-[0.6em] pt-[0.1em] overflow-visible whitespace-nowrap">
-      {words.map((w, i) => (
-        <motion.span
-          key={i}
-          initial={{ opacity: 0, y: 12, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 + Math.min(i * 0.03, 0.12) }}
-          transition={{ duration: 0.5, delay: i * 0.06, ease: 'easeOut' }}
-          className="inline-block mr-2 bg-gradient-to-r from-white via-neutral-300 to-white bg-[length:200%_100%] bg-clip-text text-transparent tracking-tight"
-          style={{ letterSpacing: i === 2 ? '0.02em' : i === 1 ? '0.01em' : '0em' }}
-        >
-          {w}{i < words.length - 1 ? '\u00A0' : ''}
-        </motion.span>
-      ))}
+      {words.map((w, i) => {
+        const isDwight = isDwightToken(w);
+        return (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, y: 12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 + Math.min(i * 0.03, 0.12) }}
+            transition={{ duration: 0.5, delay: i * 0.06, ease: 'easeOut' }}
+            className={`inline-block mr-2 bg-gradient-to-r from-white via-neutral-300 to-white bg-[length:200%_100%] bg-clip-text text-transparent tracking-tight ${isDwight ? 'relative cursor-pointer' : ''}`}
+            style={{ letterSpacing: i === 2 ? '0.02em' : i === 1 ? '0.01em' : '0em' }}
+            onMouseEnter={isDwight ? handleDwightEnter : undefined}
+            onMouseLeave={isDwight ? handleDwightLeave : undefined}
+          >
+            {w}
+            {i < words.length - 1 ? '\u00A0' : ''}
+            {isDwight && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: isDwightHover ? '100%' : 0, opacity: isDwightHover ? 1 : 0 }}
+                transition={isDwightHover ? { duration: 1.25, ease: 'linear' } : { duration: 0.2, ease: 'easeOut' }}
+                className="absolute bottom-0 left-0 h-0.5 bg-neutral-400"
+              />
+            )}
+          </motion.span>
+        );
+      })}
     </h1>
   );
 }
@@ -278,7 +325,7 @@ export default function App() {
       <Home />
 
       <footer className="relative z-10 mx-auto max-w-5xl px-4 py-10 text-xs text-neutral-500">
-        Thanks for visiting!
+        One more secret on this page...
       </footer>
     </div>
   );
