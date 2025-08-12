@@ -15,7 +15,7 @@ const getIconUrl = (skill: string): string | undefined => {
   const base = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons';
   if (skill.toUpperCase().startsWith('AWS')) return '/icons/aws.svg';
   const map: Record<string, string> = {
-    Pandas: `${base}/pandas/pandas-original.svg`,
+    Pandas: `https://cdn.simpleicons.org/pandas/ffffff`,
     Vite: `${base}/vitejs/vitejs-original.svg`,
     Tailwind: `${base}/tailwindcss/tailwindcss-original.svg`,
     CSS: `${base}/css3/css3-original.svg`,
