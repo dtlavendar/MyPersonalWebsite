@@ -26,7 +26,7 @@ const getIconUrl = (skill: string): string | undefined => {
     C: `${base}/c/c-original.svg`,
     Java: `${base}/java/java-original.svg`,
     OpenCV: `${base}/opencv/opencv-original.svg`,
-    Flask: `${base}/flask/flask-original.svg`,
+    Flask: `https://cdn.simpleicons.org/flask/ffffff`,
     TensorFlow: `${base}/tensorflow/tensorflow-original.svg`,
     SQL: `${base}/mysql/mysql-original.svg`,
     Kotlin: `${base}/kotlin/kotlin-original.svg`,
